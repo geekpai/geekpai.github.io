@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PingFang SC:300,300italic,400,400italic,700,700italic|PingFang SC:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="aliyun,linux," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon-geekpai.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="阿里云Linux 格式化和挂载数据盘在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。">
+<meta name="keywords" content="aliyun,linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云入门配置">
+<meta property="og:url" content="https://geekpai.github.io/2016/08/23/阿里云入门配置/index.html">
+<meta property="og:site_name" content="GeekPai">
+<meta property="og:description" content="阿里云Linux 格式化和挂载数据盘在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-09-23T17:15:22.226Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="阿里云入门配置">
+<meta name="twitter:description" content="阿里云Linux 格式化和挂载数据盘在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '9M7OVPKHZN',
+      apiKey: 'ec1f1ac940db8352629d47898322e7f2',
+      indexName: 'GeekPaiIndex',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://geekpai.github.io/2016/08/23/阿里云入门配置/"/>
+
+
+
+
+
+  <title>阿里云入门配置 | GeekPai</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GeekPai</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">working overtime is not your silver bullet, but your poison.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-university"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-folder-open"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th-large"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://geekpai.github.io/2016/08/23/阿里云入门配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="GeekPai">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar_bg_white_geekpai.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GeekPai">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">阿里云入门配置</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-23T21:13:16+00:00">
+                2016-08-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/08/23/阿里云入门配置/" class="leancloud_visitors" data-flag-title="阿里云入门配置">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="阿里云Linux-格式化和挂载数据盘"><a href="#阿里云Linux-格式化和挂载数据盘" class="headerlink" title="阿里云Linux 格式化和挂载数据盘"></a>阿里云Linux 格式化和挂载数据盘</h2><p>在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。</p>
+<a id="more"></a>
+<h3 id="一、购买和创建ECS实例"><a href="#一、购买和创建ECS实例" class="headerlink" title="一、购买和创建ECS实例"></a>一、购买和创建ECS实例</h3><blockquote>
+<p>参考阿里云官网购买教程</p>
+</blockquote>
+<h3 id="二、连接远程ECS实例"><a href="#二、连接远程ECS实例" class="headerlink" title="二、连接远程ECS实例"></a>二、连接远程ECS实例</h3><blockquote>
+<p>下载Xshell :<a href="https://www.netsarang.com/products/xsh_overview.html" target="_blank" rel="external">https://www.netsarang.com/products/xsh_overview.html</a></p>
+</blockquote>
+<h3 id="三、Linux格式化和挂载数据盘"><a href="#三、Linux格式化和挂载数据盘" class="headerlink" title="三、Linux格式化和挂载数据盘"></a>三、Linux格式化和挂载数据盘</h3><ol>
+<li><p>连接远程实例</p>
+</li>
+<li><p>运行<code>fdisk -l</code> 命令查看实例是否有数据盘。如果执行命令后，没有发现 <strong>/dev/vdb</strong>，表示您的实例没有数据盘，无需格式化数据盘，请忽略本文后续内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">[root@iZwz9dc6tjfwoohpoarbdzZ /]# fdisk -l</div><div class="line"></div><div class="line">Disk /dev/vda: 42.9 GB, 42949672960 bytes, 83886080 sectors</div><div class="line">Units = sectors of 1 * 512 = 512 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk label type: dos</div><div class="line">Disk identifier: 0x0008de3e</div><div class="line"></div><div class="line">   Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/vda1   *        2048    83884031    41940992   83  Linux</div><div class="line"></div><div class="line">Disk /dev/vdb: 21.5 GB, 21474836480 bytes, 41943040 sectors</div><div class="line">Units = sectors of 1 * 512 = 512 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk label type: dos</div><div class="line">Disk identifier: 0xb8c30807</div><div class="line"></div><div class="line">   Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/vdb1            2048    41943039    20970496   83  Linux</div></pre></td></tr></table></figure>
+</li>
+<li><p>创建一个单分区数据盘，依次执行以下命令：</p>
+<blockquote>
+<ol>
+<li>运行<code>fdisk /dev/vdb</code> :对数据盘进行分区。</li>
+<li>输入<code>n</code> 并按回车键：创建一个新分区。</li>
+<li>输入<code>p</code> 并按回车键：选择主分区。因为创建的是一个单分区数据盘，所以只需要创建主分区。</li>
+<li>输入分区编号并按回车建。因为这里仅创建一个分区，可以输入1。</li>
+<li>输入第一个可用的扇区编号：按回车键采用默认值 1。</li>
+<li>输入最后一个扇区编号：因为这里仅创建一个分区，所以按回车键采用默认值。</li>
+<li>输入 <code>wq</code> 并按回车键，开始分区。</li>
+</ol>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# fdisk /dev/vdb</div><div class="line">Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel</div><div class="line">Building a new DOS disklabel with disk identifier 0x5f46a8a2.</div><div class="line">Changes will remain in memory only, until you decide to write them.</div><div class="line">After that, of course, the previous content won't be recoverable.</div><div class="line">Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)</div><div class="line">WARNING: DOS-compatible mode is deprecated. It's strongly recommended to</div><div class="line">  switch off the mode (command 'c') and change display units to</div><div class="line">  sectors (command 'u').</div><div class="line">Command (m for help): n</div><div class="line">Command action</div><div class="line">e   extended</div><div class="line">p   primary partition (1-4)</div><div class="line">p</div><div class="line">Partition number (1-4): 1</div><div class="line">First cylinder (1-41610, default 1): 1</div><div class="line">Last cylinder, +cylinders or +size&#123;K,M,G&#125; (1-41610, default 41610):</div><div class="line">Using default value 41610</div><div class="line">Command (m for help): wq</div><div class="line">The partition table has been altered!</div><div class="line">Calling ioctl() to re-read partition table.</div><div class="line">Syncing disks.</div></pre></td></tr></table></figure>
+</li>
+<li><p>查看新的分区：运行命令 <code>fdisk -l</code>。如果出现以下信息，说明已经成功创建了新分区 /dev/vdb1。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# fdisk -l</div><div class="line">Disk /dev/vda: 42.9 GB, 42949672960 bytes</div><div class="line">255 heads, 63 sectors/track, 5221 cylinders</div><div class="line">Units = cylinders of 16065 * 512 = 8225280 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk identifier: 0x00053156</div><div class="line">Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/vda1   *           1        5222    41942016   83  Linux</div><div class="line">Disk /dev/vdb: 21.5 GB, 21474836480 bytes</div><div class="line">16 heads, 63 sectors/track, 41610 cylinders</div><div class="line">Units = cylinders of 1008 * 512 = 516096 bytes</div><div class="line">Sector size (logical/physical): 512 bytes / 512 bytes</div><div class="line">I/O size (minimum/optimal): 512 bytes / 512 bytes</div><div class="line">Disk identifier: 0x5f46a8a2</div><div class="line">Device Boot      Start         End      Blocks   Id  System</div><div class="line">/dev/vdb1               1       41610    20971408+  83  Linux</div></pre></td></tr></table></figure>
+</li>
+<li><p>在新分区上创建一个文件系统：运行命令 <code>mkfs.ext3 /dev/vdb1</code>。</p>
+<blockquote>
+<p>本示例要创建一个 ext3 文件系统。您也可以根据自己的需要，选择创建其他文件系统，例如，如果需要在 Linux、Windows 和 Mac 系统之间共享文件，您可以使用 <code>mkfs.vfat</code> 创建 VFAT 文件系统。创建文件系统所需时间取决于数据盘大小。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# mkfs.ext3 /dev/vdb1</div><div class="line">mke2fs 1.41.12 (17-May-2010)</div><div class="line">Filesystem label=</div><div class="line">OS type: Linux</div><div class="line">Block size=4096 (log=2)</div><div class="line">Fragment size=4096 (log=2)</div><div class="line">Stride=0 blocks, Stripe width=0 blocks</div><div class="line">1310720 inodes, 5242852 blocks</div><div class="line">262142 blocks (5.00%) reserved for the super user</div><div class="line">First data block=0</div><div class="line">Maximum filesystem blocks=4294967296</div><div class="line">160 block groups</div><div class="line">32768 blocks per group, 32768 fragments per group</div><div class="line">8192 inodes per group</div><div class="line">Superblock backups stored on blocks:</div><div class="line">     32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,</div><div class="line">     4096000</div><div class="line">Writing inode tables: done</div><div class="line">Creating journal (32768 blocks): done</div><div class="line">Writing superblocks and filesystem accounting information: done</div><div class="line">This filesystem will be automatically checked every 37 mounts or</div><div class="line">180 days, whichever comes first.  Use tune2fs -c or -i to override.</div></pre></td></tr></table></figure>
+</li>
+<li><p>（建议）备份 <strong>etc/fstab</strong>：运行命令 <code>cp /etc/fstab /etc/fstab.bak</code>。</p>
+</li>
+<li><p>向 <strong>/etc/fstab</strong> 写入新分区信息：运行命令</p>
+<p><code>echo /dev/vdb1 /mnt ext3 defaults 0 0 &gt;&gt; /etc/fstab</code>。</p>
+<blockquote>
+<p><strong>注意</strong>：Ubuntu 12.04 不支持 barrier，所以对该系统正确的命令是：</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo '/dev/vdb1 /mnt ext3 barrier=0 0 0' &gt;&gt; /etc/fstab</div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果需要把数据盘单独挂载到某个文件夹，比如单独用来存放网页，请将以上命令 /mnt 替换成所需的挂载点路径。</p>
+</blockquote>
+</li>
+<li><p>查看 <strong>/etc/fstab</strong> 中的新分区信息：运行命令 <code>cat /etc/fstab</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# cat /etc/fstab</div><div class="line"><span class="meta"> #</span></div><div class="line"><span class="meta"> #</span> /etc/fstab</div><div class="line"><span class="meta"> #</span> Created by anaconda on Thu Feb 23 07:28:22 2017</div><div class="line"><span class="meta"> #</span></div><div class="line"><span class="meta"> #</span> Accessible filesystems, by reference, are maintained under '/dev/disk'</div><div class="line"><span class="meta"> #</span> See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</div><div class="line"><span class="meta"> #</span></div><div class="line"> UUID=3d083579-f5d9-4df5-9347-8d27925805d4 /                       ext4    defaults        1 1</div><div class="line"> tmpfs                   /dev/shm                tmpfs   defaults        0 0</div><div class="line"> devpts                  /dev/pts                devpts  gid=5,mode=620  0 0</div><div class="line"> sysfs                   /sys                    sysfs   defaults        0 0</div><div class="line"> proc                    /proc                   proc    defaults        0 0</div><div class="line"> /dev/vdb1 /mnt ext3 defaults 0 0</div></pre></td></tr></table></figure>
+</li>
+<li><p>挂载文件系统：运行命令 <code>mount /dev/vdb1 /mnt</code>。</p>
+</li>
+<li><p>查看目前磁盘空间和使用情况：运行命令 <code>df -h</code>。如果出现新建文件系统的信息，说明挂载成功，可以使用新的文件系统了。</p>
+<blockquote>
+<p>挂载操作完成后，不需要重启实例即可开始使用新的文件系统。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# mount /dev/vdb1 /mnt</div><div class="line">[root@iXXXXXXX ~]# df -h</div><div class="line">Filesystem      Size  Used Avail Use% Mounted on</div><div class="line">/dev/vda1        40G  6.6G   31G  18% /</div><div class="line">tmpfs           499M     0  499M   0% /dev/shm</div><div class="line">/dev/vdb1        20G  173M   19G   1% /mnt</div></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/geekpai-wechat-qcode_430.jpg" alt="GeekPai wechat" style="width: 200px; max-width: 100%;"/>
+    <div>GeekPai-WeChat</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/aliyun/" rel="tag"># aliyun</a>
+          
+            <a href="/tags/linux/" rel="tag"># linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/02/Linux下搭建JavaWeb开发环境/" rel="prev" title="Web开发环境">
+                Web开发环境 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar_bg_white_geekpai.png"
+               alt="GeekPai" />
+          <p class="site-author-name" itemprop="name">GeekPai</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/geekpai" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/implement" title="Pikachu" target="_blank">Pikachu</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#阿里云Linux-格式化和挂载数据盘"><span class="nav-number">1.</span> <span class="nav-text">阿里云Linux 格式化和挂载数据盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、购买和创建ECS实例"><span class="nav-number">1.1.</span> <span class="nav-text">一、购买和创建ECS实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、连接远程ECS实例"><span class="nav-number">1.2.</span> <span class="nav-text">二、连接远程ECS实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、Linux格式化和挂载数据盘"><span class="nav-number">1.3.</span> <span class="nav-text">三、Linux格式化和挂载数据盘</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2014 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GeekPai</span>
+</div>
+
+
+<div class="powered-by">
+  Thanks - <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("CbbvD8vvK0S3wQgnux6GyVqd-gzGzoHsz", "YnmpnHnzFvjUuURa7XpTdnRF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  <a href="https://github.com/geekpai"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"></a>
+  </body>
+</html>
