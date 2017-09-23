@@ -114,7 +114,7 @@
 <meta property="og:site_name" content="GeekPai">
 <meta property="og:description" content="阿里云Linux 格式化和挂载数据盘在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-23T15:04:00.678Z">
+<meta property="og:updated_time" content="2017-09-23T15:12:43.113Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="阿里云入门配置">
 <meta name="twitter:description" content="阿里云Linux 格式化和挂载数据盘在本示例中，我们用一个新的 20 GB 数据盘（设备名为 /dev/xvdb）创建一个单分区数据盘并挂载一个 ext3 文件系统。使用的实例是 I/O 优化实例，操作系统为 CentOS 7.3 64位。">
@@ -435,7 +435,7 @@
 </blockquote>
 </li>
 <li><p>查看 <strong>/etc/fstab</strong> 中的新分区信息：运行命令 <code>cat /etc/fstab</code>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# cat /etc/fstab</div><div class="line"><span class="meta"> #</span><span class="bash"></span></div><div class="line"><span class="meta"> #</span><span class="bash"> /etc/fstab</span></div><div class="line"><span class="meta"> #</span><span class="bash"> Created by anaconda on Thu Feb 23 07:28:22 2017</span></div><div class="line"><span class="meta"> #</span><span class="bash"></span></div><div class="line"><span class="meta"> #</span><span class="bash"> Accessible filesystems, by reference, are maintained under <span class="string">'/dev/disk'</span></span></div><div class="line"><span class="meta"> #</span><span class="bash"> See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) <span class="keyword">for</span> more info</span></div><div class="line"><span class="meta"> #</span><span class="bash"></span></div><div class="line"> UUID=3d083579-f5d9-4df5-9347-8d27925805d4 /                       ext4    defaults        1 1</div><div class="line"> tmpfs                   /dev/shm                tmpfs   defaults        0 0</div><div class="line"> devpts                  /dev/pts                devpts  gid=5,mode=620  0 0</div><div class="line"> sysfs                   /sys                    sysfs   defaults        0 0</div><div class="line"> proc                    /proc                   proc    defaults        0 0</div><div class="line"> /dev/vdb1 /mnt ext3 defaults 0 0</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">[root@iXXXXXXX ~]# cat /etc/fstab</div><div class="line"><span class="meta"> #</span></div><div class="line"><span class="meta"> #</span> /etc/fstab</div><div class="line"><span class="meta"> #</span> Created by anaconda on Thu Feb 23 07:28:22 2017</div><div class="line"><span class="meta"> #</span></div><div class="line"><span class="meta"> #</span> Accessible filesystems, by reference, are maintained under '/dev/disk'</div><div class="line"><span class="meta"> #</span> See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</div><div class="line"><span class="meta"> #</span></div><div class="line"> UUID=3d083579-f5d9-4df5-9347-8d27925805d4 /                       ext4    defaults        1 1</div><div class="line"> tmpfs                   /dev/shm                tmpfs   defaults        0 0</div><div class="line"> devpts                  /dev/pts                devpts  gid=5,mode=620  0 0</div><div class="line"> sysfs                   /sys                    sysfs   defaults        0 0</div><div class="line"> proc                    /proc                   proc    defaults        0 0</div><div class="line"> /dev/vdb1 /mnt ext3 defaults 0 0</div></pre></td></tr></table></figure>
 </li>
 <li><p>挂载文件系统：运行命令 <code>mount /dev/vdb1 /mnt</code>。</p>
 </li>
@@ -483,22 +483,6 @@
       
       
 
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/08/08/AppVeyor-CI/" rel="prev" title="AppVeyor-CI">
-                AppVeyor-CI <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
       
 
       
@@ -572,7 +556,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -583,7 +567,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -594,7 +578,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
